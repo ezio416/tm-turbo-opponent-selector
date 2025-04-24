@@ -48,7 +48,7 @@ void Main() {
             && uid != lastUid
         ) {
             lastUid = uid;
-            OnEnteredMap();
+            OnEnteredMapAsync();
         }
 
         if (true
@@ -68,7 +68,7 @@ void RenderMenu() {
         S_Enabled = !S_Enabled;
 }
 
-void OnEnteredMap() {
+void OnEnteredMapAsync() {
     print("OnEnteredMap");
 
     auto App = cast<CTrackMania>(GetApp());
