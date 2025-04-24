@@ -12,6 +12,9 @@ bool S_Enabled = true;
 [Setting category="General" name="Opponent"]
 Opponent S_Opponent = Opponent::Alone;
 
+[Setting category="General" name="Reload map on finish" description="Since the game doesn't give you the full menu after finishing, this allows for ghost selection"]
+bool S_ReloadMapOnFinish = false;
+
 enum Opponent {
     Gold,
     Silver,
@@ -45,6 +48,20 @@ void Main() {
             lastUid = uid;
             OnEnteredMap();
         }
+
+        if (!S_ReloadMapOnFinish)
+            continue;
+
+        auto Playground = cast<CTrackManiaRaceNew>(App.CurrentPlayground);
+        if (true
+            && App.Challenge.MapInfo !is null
+            && Playground !is null
+            && Playground.UIConfigs.Length > 0
+            && Playground.UIConfigs[0] !is null
+            && Playground.UIConfigs[0].UISequence == CGamePlaygroundUIConfig::EUISequence::EndRound
+        ) {
+            Map(App.Challenge.MapInfo).Play();
+        }
     }
 }
 
@@ -64,7 +81,7 @@ void OnEnteredMap() {
         yield();
 
         if (Time::Stamp - start > 10) {
-            warn("timed out");
+            warn("OnEnteredMap timed out");
             return;
         }
 
@@ -130,5 +147,31 @@ void OnEnteredMap() {
         Button.OnAction();
         print("selected opponent '" + tostring(S_Opponent) + "'");
         return;
+    }
+}
+
+class Map {
+    string name;
+    string path;
+
+    Map(CGameCtnChallengeInfo@ map) {
+        name = map.Name;
+        path = map.FileName;
+    }
+
+    void Play() {
+        startnew(CoroutineFunc(PlayAsync));
+    }
+
+    void PlayAsync() {
+        print("loading map " + name + " from path " + path);
+
+        auto App = cast<CTrackMania>(GetApp());
+        App.BackToMainMenu();
+        while (!App.ManiaTitleFlowScriptAPI.IsReady)
+            yield();
+        App.ManiaTitleFlowScriptAPI.PlayMap(path, "TMC_CampaignSolo", "");
+        while (!App.ManiaTitleFlowScriptAPI.IsReady)
+            yield();
     }
 }
