@@ -16,10 +16,10 @@ Opponent S_Opponent = Opponent::Alone;
 bool S_ReloadMapOnFinish = false;
 
 enum Opponent {
-    Gold,
-    Silver,
-    Bronze,
-    Alone
+    Gold   = 6,
+    Silver = 7,
+    Bronze = 8,
+    Alone  = 9
 }
 
 void Main() {
@@ -115,7 +115,7 @@ void OnEnteredMapAsync() {
             continue;
         }
 
-        uint oppIndex = uint(S_Opponent) + 6;
+        uint oppIndex = uint(S_Opponent);
         auto OpponentMenu = cast<CControlFrame>(OpponentFrame.Childs[1]);
         if (false
             || OpponentMenu is null
