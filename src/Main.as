@@ -6,6 +6,8 @@ const string  pluginIcon  = Icons::Arrows;
 Meta::Plugin@ pluginMeta  = Meta::ExecutingPlugin();
 const string  pluginTitle = pluginColor + pluginIcon + "\\$G " + pluginMeta.Name;
 
+bool loading = false;
+
 void Main() {
     auto App = cast<CTrackMania>(GetApp());
 
@@ -37,11 +39,13 @@ void Main() {
 
         if (true
             && S_ReloadMapOnFinish
+            && !loading
             && App.Challenge.MapInfo !is null
             && Playground.UIConfigs.Length > 0
             && Playground.UIConfigs[0] !is null
             && Playground.UIConfigs[0].UISequence == CGamePlaygroundUIConfig::EUISequence::EndRound
         ) {
+            print("RELOADING MAP");
             Map(App.Challenge.MapInfo).Play();
         }
     }
@@ -142,10 +146,14 @@ class Map {
     }
 
     void Play() {
+        if (loading)
+            return;
+        loading = true;
+
         startnew(CoroutineFunc(PlayAsync));
     }
 
-    void PlayAsync() {
+    private void PlayAsync() {
         print("loading map " + name + " from path " + path);
 
         auto App = cast<CTrackMania>(GetApp());
@@ -155,5 +163,8 @@ class Map {
         App.ManiaTitleFlowScriptAPI.PlayMap(path, "TMC_CampaignSolo", "");
         while (!App.ManiaTitleFlowScriptAPI.IsReady)
             yield();
+
+        sleep(10000);
+        loading = false;
     }
 }
