@@ -30,10 +30,12 @@ void Main() {
     while (true) {
         yield();
 
+        auto Playground = cast<CTrackManiaRaceNew>(App.CurrentPlayground);
+
         if (false
             || !S_Enabled
             || App.Challenge is null
-            || App.CurrentPlayground is null
+            || Playground is null
             || App.Editor !is null
         ) {
             lastUid = uid = "";
@@ -49,13 +51,9 @@ void Main() {
             OnEnteredMap();
         }
 
-        if (!S_ReloadMapOnFinish)
-            continue;
-
-        auto Playground = cast<CTrackManiaRaceNew>(App.CurrentPlayground);
         if (true
+            && S_ReloadMapOnFinish
             && App.Challenge.MapInfo !is null
-            && Playground !is null
             && Playground.UIConfigs.Length > 0
             && Playground.UIConfigs[0] !is null
             && Playground.UIConfigs[0].UISequence == CGamePlaygroundUIConfig::EUISequence::EndRound
