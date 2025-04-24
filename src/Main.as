@@ -38,7 +38,10 @@ void Main() {
         }
 
         uid = App.Challenge.EdChallengeId;
-        if (uid.Length > 0 && uid != lastUid) {
+        if (true
+            && uid.Length > 0
+            && uid != lastUid
+        ) {
             lastUid = uid;
             OnEnteredMap();
         }
